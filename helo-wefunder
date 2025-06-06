@@ -1,0 +1,790 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <title>HELO: Your AI-Powered Safety Companion</title>
+    <meta content="width=device-width, initial-scale=1" name="viewport"/>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&family=League+Spartan:wght@100;200;300;400;500;600;700;800;900&family=Montserrat:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Cabin:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600;1,700&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Custom styles to match the EFG aesthetic and ensure full responsiveness */
+        :root {
+            --color-primary: #34D399; /* Green from EFG site */
+            --color-secondary: #3B82F6; /* Blue from EFG site */
+            --color-dark: #1F2937; /* Dark background */
+            --color-text-light: #F9FAFB; /* Light text */
+            --color-text-dark: #111827; /* Dark text */
+            --gradient-start: #3B82F6; /* Blue for gradient */
+            --gradient-end: #34D399; /* Green for gradient */
+        }
+
+        body {
+            font-family: 'Inter', sans-serif; /* Default font, can be overridden by specific elements */
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            background-color: var(--color-dark);
+            color: var(--color-text-light);
+            overflow-x: hidden; /* Prevent horizontal scrolling */
+        }
+
+        .page-wrapper {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        .main-wrapper {
+            flex-grow: 1;
+        }
+
+        /* Gradient Button styles */
+        .button-main.gradient {
+            background-image: linear-gradient(to right, var(--gradient-start), var(--gradient-end));
+            border: none;
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 9999px;
+            font-weight: 600;
+            transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        .button-main.gradient:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Separator styles */
+        .separator-small {
+            width: 3rem;
+            height: 0.25rem;
+            background-color: var(--color-primary);
+            border-radius: 9999px;
+            margin-top: 1rem;
+            margin-bottom: 1rem;
+        }
+        .separator-large {
+            width: 6rem;
+            height: 0.35rem;
+            background-color: var(--color-primary);
+            border-radius: 9999px;
+            margin-top: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+        .separator-vertical {
+            width: 2px;
+            height: 80%; /* Adjust height as needed */
+            background-color: rgba(255, 255, 255, 0.2);
+            border-radius: 9999px;
+            margin: 0 2rem;
+            display: flex; /* Make it a flex item */
+            align-self: center; /* Center vertically in flex container */
+        }
+        @media (max-width: 767px) {
+            .separator-vertical {
+                width: 80%;
+                height: 2px;
+                margin: 2rem 0;
+            }
+        }
+
+        /* Background Video Styles */
+        .section-bg-video {
+            position: relative;
+            overflow: hidden;
+            background-size: cover;
+            background-position: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 60vh; /* Minimum height for visibility */
+            padding: 4rem 0; /* Adjust padding as needed */
+        }
+        .section-bg-video video {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            min-width: 100%;
+            min-height: 100%;
+            width: auto;
+            height: auto;
+            z-index: -1;
+            transform: translate(-50%, -50%);
+            background-size: cover;
+            filter: brightness(0.6); /* Darken video */
+        }
+
+        /* Generic image/video embed aspect ratio */
+        .w-embed-video-container {
+            position: relative;
+            width: 100%;
+            padding-top: 56.25%; /* 16:9 Aspect Ratio */
+        }
+        .w-embed-video-container iframe,
+        .w-embed-video-container video {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+
+        /* Specific section background images/patterns */
+        .hero-noise {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0.1;
+            mix-blend-mode: overlay;
+            pointer-events: none;
+            object-fit: cover;
+            z-index: 0;
+        }
+
+        /* Custom typography classes */
+        .heading-style-h1 {
+            font-family: 'League Spartan', sans-serif;
+            font-weight: 700;
+            font-size: 3.5rem; /* Adjust as needed */
+            line-height: 1.1;
+        }
+        .heading-style-h2 {
+            font-family: 'League Spartan', sans-serif;
+            font-weight: 700;
+            font-size: 2.8rem; /* Adjust as needed */
+            line-height: 1.2;
+        }
+        .heading-style-h3 {
+            font-family: 'League Spartan', sans-serif;
+            font-weight: 600;
+            font-size: 2rem;
+            line-height: 1.3;
+        }
+        .heading-style-h4 {
+            font-family: 'League Spartan', sans-serif;
+            font-weight: 600;
+            font-size: 1.5rem;
+            line-height: 1.4;
+        }
+
+        .text-size-xlarge { font-size: 2.25rem; line-height: 1.25; }
+        .text-size-large { font-size: 1.5rem; line-height: 1.5; }
+        .text-size-medium { font-size: 1.125rem; line-height: 1.6; }
+        .text-size-regular { font-size: 1rem; line-height: 1.7; }
+        .text-size-small { font-size: 0.875rem; line-height: 1.8; }
+
+        .text-style-allcaps { text-transform: uppercase; }
+        .text-color-green { color: var(--color-primary); }
+        .text-color-blue { color: var(--color-secondary); }
+        .text-color-white { color: var(--color-text-light); }
+        .text-color-dark { color: var(--color-text-dark); }
+        .text-align-center { text-align: center; }
+        .text-weight-bold { font-weight: 700; }
+        .text-weight-medium { font-weight: 500; }
+
+        /* General Spacing */
+        .padding-global { padding-left: 1.5rem; padding-right: 1.5rem; }
+        .padding-section-small { padding-top: 4rem; padding-bottom: 4rem; }
+        .padding-section-medium { padding-top: 6rem; padding-bottom: 6rem; }
+        .padding-section-large { padding-top: 8rem; padding-bottom: 8rem; }
+        .padding-section-xlarge { padding-top: 10rem; padding-bottom: 10rem; }
+        .container-small { max-width: 48rem; margin-left: auto; margin-right: auto; }
+        .container-medium { max-width: 64rem; margin-left: auto; margin-right: auto; }
+        .container-large { max-width: 80rem; margin-left: auto; margin-right: auto; }
+
+        /* Responsive adjustments for spacing */
+        @media (max-width: 767px) {
+            .padding-global { padding-left: 1rem; padding-right: 1rem; }
+            .padding-section-small { padding-top: 3rem; padding-bottom: 3rem; }
+            .padding-section-medium { padding-top: 4rem; padding-bottom: 4rem; }
+            .padding-section-large { padding-top: 5rem; padding-bottom: 5rem; }
+
+            .heading-style-h1 { font-size: 2.5rem; }
+            .heading-style-h2 { font-size: 2rem; }
+            .heading-style-h3 { font-size: 1.75rem; }
+            .text-size-xlarge { font-size: 1.75rem; }
+            .text-size-large { font-size: 1.25rem; }
+            .text-size-medium { font-size: 1rem; }
+        }
+
+        /* Specific component styles */
+        .nav_nav {
+            background-color: var(--color-dark);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+        }
+        .nav_logo {
+            height: 2rem;
+            width: auto;
+        }
+        .nav_menu-link {
+            padding: 0.75rem 1.25rem;
+            font-weight: 500;
+            color: var(--color-text-light);
+            transition: color 0.2s ease-in-out;
+            border-radius: 0.5rem;
+        }
+        .nav_menu-link:hover {
+            color: var(--color-primary);
+        }
+        .nav_menu-link.cta {
+            background-image: linear-gradient(to right, var(--gradient-start), var(--gradient-end));
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 9999px;
+            margin-left: 1rem;
+            font-weight: 600;
+            transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+        }
+        .nav_menu-link.cta:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+        }
+
+        /* Hero deco elements (simplified using CSS for basic shapes) */
+        .hero-deco {
+            position: absolute;
+            opacity: 0.1;
+            border-radius: 50%;
+            background-color: var(--color-primary); /* Use primary color for deco */
+            z-index: 0; /* Ensure noise is above these */
+            pointer-events: none;
+            filter: blur(50px); /* Soft blur effect */
+        }
+        .hero-deco:nth-child(1) { top: 10%; left: 5%; width: 150px; height: 150px; }
+        .hero-deco:nth-child(2) { top: 0%; right: 10%; width: 200px; height: 200px; background-color: var(--color-secondary); }
+        .hero-deco:nth-child(3) { bottom: 5%; left: 30%; width: 100px; height: 100px; }
+        .hero-deco:nth-child(4) { bottom: 15%; right: 5%; width: 120px; height: 120px; background-color: var(--color-secondary); }
+
+
+        .trust_logo {
+            height: 3rem; /* Default height */
+            width: auto;
+            object-fit: contain;
+            filter: grayscale(100%) brightness(200%); /* Desaturate and lighten for dark background */
+            opacity: 0.7;
+            transition: opacity 0.3s ease;
+        }
+        .trust_logo:hover {
+            opacity: 1;
+        }
+        .trust_logo.small {
+            height: 2.5rem; /* Smaller height for specific logos */
+        }
+        @media (max-width: 767px) {
+            .trust_logo { height: 2.5rem; }
+            .trust_logo.small { height: 2rem; }
+        }
+
+        .how_card {
+            background-color: rgba(255, 255, 255, 0.05);
+            padding: 2rem;
+            border-radius: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            transition: transform 0.3s ease;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+        }
+        .how_card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 30px rgba(0,0,0,0.5);
+        }
+        .how_image {
+            width: 8rem;
+            height: 8rem;
+            object-fit: contain;
+            margin-bottom: 1.5rem;
+        }
+        @media (max-width: 767px) {
+            .how_image { width: 6rem; height: 6rem; }
+        }
+
+        .fail_card {
+            background-color: rgba(255, 255, 255, 0.05);
+            padding: 2rem;
+            border-radius: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            transition: transform 0.3s ease;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+            height: 100%; /* Ensure cards are same height in grid */
+        }
+        .fail_card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 30px rgba(0,0,0,0.5);
+        }
+        .fail_card img {
+            width: 4rem;
+            height: 4rem;
+            margin-bottom: 1.5rem;
+            filter: brightness(200%); /* Make icons visible on dark background */
+        }
+
+        .fullscreen_graphic {
+            width: 100%;
+            height: auto;
+            object-fit: cover;
+            border-radius: 1.5rem;
+        }
+
+        .invest_image {
+            max-width: 100%;
+            height: auto;
+            border-radius: 1.5rem;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+
+        .invest_dark-farm {
+            background-color: rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(5px);
+            border-radius: 1.5rem;
+            padding: 2.5rem;
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: center;
+            gap: 2rem;
+            box-shadow: 0 4px 30px rgba(0,0,0,0.5);
+        }
+        .invest_wefunder-logo {
+            height: 3rem;
+            width: auto;
+            filter: brightness(200%);
+        }
+        @media (max-width: 767px) {
+            .invest_dark-farm {
+                flex-direction: column;
+                text-align: center;
+            }
+            .invest_wefunder-logo {
+                margin-bottom: 1rem;
+            }
+            .invest_dark-farm .separator-vertical {
+                display: none; /* Hide vertical separator on small screens */
+            }
+        }
+
+        .footer_line {
+            width: 100%;
+            height: 1px;
+            background-color: rgba(255, 255, 255, 0.2);
+            margin-top: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .z-index-1 { z-index: 10; position: relative; } /* For content over deco elements */
+
+        /* Smooth scrolling for anchor links */
+        html {
+            scroll-behavior: smooth;
+        }
+    </style>
+</head>
+<body>
+    <div class="page-wrapper">
+        <main class="main-wrapper">
+            <!-- Navigation Section -->
+            <div class="section_nav">
+                <div class="nav_nav w-nav flex justify-center py-4 bg-gray-900 sticky top-0 z-50 shadow-lg rounded-b-xl">
+                    <div class="padding-global w-full max-w-7xl px-4 md:px-6">
+                        <div class="nav_flex flex justify-between items-center">
+                            <a href="#" class="nav_logo-link flex items-center">
+                                <img src="https://placehold.co/100x40/000000/FFFFFF?text=HELO_Logo" loading="lazy" alt="HELO Logo" class="nav_logo rounded-md"/>
+                            </a>
+                            <nav role="navigation" class="nav_menu hidden md:flex space-x-4 lg:space-x-8 items-center">
+                                <a href="#social" class="nav_menu-link hover:text-green-400 transition-colors">OUR STORY</a>
+                                <a href="#problem" class="nav_menu-link hover:text-green-400 transition-colors">PROBLEM</a>
+                                <a href="#solution" class="nav_menu-link hover:text-green-400 transition-colors">SOLUTION</a>
+                                <a href="#how-it-works" class="nav_menu-link hover:text-green-400 transition-colors">HOW IT WORKS</a>
+                                <a href="#deals" class="nav_menu-link hover:text-green-400 transition-colors">INVESTMENT TIERS</a>
+                                <a href="https://wefunder.com/helo" target="_blank" class="nav_menu-link cta bg-gradient-to-r from-blue-500 to-green-500 text-white px-5 py-2 rounded-full font-semibold hover:shadow-lg transition-transform transform hover:-translate-y-0.5">INVEST</a>
+                            </nav>
+                            <div class="md:hidden">
+                                <!-- Hamburger menu icon (SVG) -->
+                                <svg class="w-8 h-8 text-white cursor-pointer" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                                </svg>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Hero Section -->
+            <div class="section_hero relative flex items-center justify-center min-h-[70vh] py-16 overflow-hidden">
+                <div class="z-index-1 padding-global w-full max-w-7xl px-4 md:px-6">
+                    <div class="hero_2col flex flex-col md:flex-row items-center gap-10 md:gap-20">
+                        <div class="hero_content-stack flex flex-col items-center md:items-start text-center md:text-left md:w-1/2">
+                            <div class="text-size-medium text-white mb-2">HELO: YOUR AI SAFETY COMPANION</div>
+                            <h1 class="heading-style-h2 text-white text-style-allcaps mb-4">Invest in The Future of AI-Powered Emergency Preparedness</h1>
+                            <div class="text-size-large text-white text-weight-medium mb-6">Proactive Safety. Intelligent Alerts. Complete Peace of Mind.</div>
+                            <div class="separator-small bg-green-400 rounded-full h-1 w-16 mb-6"></div>
+                            <div class="button-group flex flex-wrap justify-center md:justify-start gap-4">
+                                <a href="https://wefunder.com/helo" target="_blank" class="button-main gradient bg-gradient-to-r from-blue-500 to-green-500 text-white px-6 py-3 rounded-full font-bold shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">See the Investment on Wefunder</a>
+                            </div>
+                        </div>
+                        <div class="md:w-1/2">
+                            <div class="w-embed-video-container rounded-2xl overflow-hidden shadow-2xl">
+                                <iframe class="embedly-embed rounded-2xl" src="https://www.youtube.com/embed/dQw4w9WgXcQ" width="940" height="529" scrolling="no" allowfullscreen title="HELO Product Introduction"></iframe>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Decorative elements (simplified from EFG) -->
+                <div class="hero-noise absolute inset-0 bg-gray-900 opacity-5 mix-blend-overlay pointer-events-none"></div>
+                <div class="hero-deco absolute top-1/4 left-5 w-40 h-40 bg-green-400 opacity-10 rounded-full blur-3xl"></div>
+                <div class="hero-deco absolute bottom-1/4 right-10 w-52 h-52 bg-blue-500 opacity-10 rounded-full blur-3xl"></div>
+            </div>
+
+            <!-- Download CTA Section -->
+            <div class="section_download-cta py-16 bg-gray-900">
+                <div class="padding-global w-full max-w-7xl px-4 md:px-6">
+                    <div class="download-cta_stack flex flex-col items-center text-center">
+                        <div class="margin-bottom margin-small mb-4">
+                            <div class="separator-large bg-green-400 rounded-full h-1.5 w-24"></div>
+                        </div>
+                        <div class="margin-bottom margin-xsmall mb-6">
+                            <h2 class="heading-style-h2 text-white text-style-allcaps">UNINTERRUPTED SAFETY — <span class="text-color-blue">24/7 PEACE OF MIND</span></h2>
+                        </div>
+                        <div class="margin-bottom margin-small mb-8">
+                            <div class="text-size-medium text-gray-300">Invest in the Smart Device That Keeps You Ready When It Matters Most</div>
+                        </div>
+                        <div class="button-group center flex justify-center">
+                            <a href="#" class="button-main bg-gradient-to-r from-blue-500 to-green-500 text-white px-6 py-3 rounded-full font-bold shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">Download our pitch deck</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Trust Section (Social Proof) -->
+            <div id="social" class="section_trust py-16 bg-gray-800">
+                <div class="padding-global w-full max-w-7xl px-4 md:px-6">
+                    <div class="trust_wrapper flex flex-col items-center">
+                        <h2 class="heading-style-h2 text-align-center text-color-white mb-10">TRUSTED BY / FEATURED IN</h2>
+                        <div class="trust_logo-flex flex flex-wrap justify-center items-center gap-8 md:gap-16">
+                            <img src="https://placehold.co/150x60/FFFFFF/000000?text=TechCrunch" loading="lazy" alt="TechCrunch Logo" class="trust_logo rounded-md"/>
+                            <img src="https://placehold.co/150x60/FFFFFF/000000?text=Forbes" loading="lazy" alt="Forbes Logo" class="trust_logo rounded-md"/>
+                            <img src="https://placehold.co/150x60/FFFFFF/000000?text=Innovation+Award" loading="lazy" alt="Innovation Award Logo" class="trust_logo small rounded-md"/>
+                            <img src="https://placehold.co/150x60/FFFFFF/000000?text=Smart+Home+Mag" loading="lazy" alt="Smart Home Magazine Logo" class="trust_logo rounded-md"/>
+                            <img src="https://placehold.co/150x60/FFFFFF/000000?text=Safety+Alliance" loading="lazy" alt="Safety Alliance Logo" class="trust_logo rounded-md"/>
+                            <img src="https://placehold.co/150x60/FFFFFF/000000?text=Early+Adopters" loading="lazy" alt="Early Adopters Logo" class="trust_logo small rounded-md"/>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Hello Section (Solution) -->
+            <div id="solution" class="section_hello relative py-16 md:py-24 overflow-hidden">
+                <div class="padding-global z-index-1 w-full max-w-7xl px-4 md:px-6">
+                    <div class="hello_2col flex flex-col md:flex-row items-center gap-10 md:gap-20">
+                        <div class="hello_content md:w-1/2 flex flex-col items-center md:items-start text-center md:text-left">
+                            <div class="grid_header-stack flex flex-col items-center md:items-start mb-6">
+                                <h2 class="heading-style-h2 text-white">Emergency Readiness: <span class="text-color-green">Smart, Proactive, and Connected</span></h2>
+                                <div class="separator-small bg-green-400 rounded-full h-1 w-16 mt-4"></div>
+                            </div>
+                            <div class="text-size-medium text-gray-300 mb-6">HELO is building an AI-powered smart device that integrates seamlessly into your home, providing real-time alerts, intelligent guidance, and critical communication during any emergency. Unlike traditional emergency tools, HELO learns, adapts, and connects you to vital resources when it matters most.</div>
+                            <div class="text-size-medium text-gray-300">Our proprietary AI learns your home's unique patterns and the local environment, offering unparalleled precision in threat detection and response. It's not just a device; it's your personal emergency command center, ensuring you're always one step ahead.</div>
+                        </div>
+                        <div class="hello_image bg md:w-1/2 relative w-full h-80 md:h-96 rounded-2xl overflow-hidden shadow-2xl flex items-center justify-center">
+                            <video autoplay loop muted playsinline class="absolute inset-0 w-full h-full object-cover">
+                                <source src="https://assets.mixkit.co/videos/preview/mixkit-futuristic-smart-home-system-46325-large.mp4" type="video/mp4">
+                                <source src="https://assets.mixkit.co/videos/preview/mixkit-futuristic-smart-home-system-46325-large.webm" type="video/webm">
+                                <!-- Placeholder image if video fails -->
+                                <img src="https://placehold.co/600x400/000000/FFFFFF?text=HELO+AI+Video" alt="HELO AI in action" class="w-full h-full object-cover">
+                            </video>
+                            <img src="https://placehold.co/200x200/000000/FFFFFF?text=HELO+Device" loading="lazy" alt="HELO Device Mockup" class="hello_image inner absolute z-10 w-48 h-48 md:w-64 md:h-64 object-contain"/>
+                        </div>
+                    </div>
+
+                    <!-- How It Works Section -->
+                    <div id="how-it-works" class="padding-section-large pt-24">
+                        <div class="margin-bottom margin-large mb-12">
+                            <div class="grid_header-stack less center flex flex-col items-center">
+                                <h2 class="heading-style-h2 text-white">How HELO Works</h2>
+                                <div class="separator-small bg-green-400 rounded-full h-1 w-16 mt-4"></div>
+                            </div>
+                        </div>
+                        <div class="margin-bottom margin-medium mb-12">
+                            <div class="how_3col grid grid-cols-1 md:grid-cols-3 gap-8">
+                                <div class="how_card">
+                                    <img src="https://placehold.co/128x128/3B82F6/FFFFFF/png?text=1" loading="lazy" alt="Step 1 Icon" class="how_image"/>
+                                    <div class="how_step-wrap flex items-center mb-2">
+                                        <h3 class="heading-style-h3 text-color-blue mr-2">1 |</h3>
+                                        <h3 class="heading-style-h3 text-color-white text-style-allcaps">Simple Setup</h3>
+                                    </div>
+                                    <div class="text-align-center text-gray-300">Easily connect HELO to your home network in minutes.</div>
+                                </div>
+                                <div class="how_card">
+                                    <img src="https://placehold.co/128x128/3B82F6/FFFFFF/png?text=2" loading="lazy" alt="Step 2 Icon" class="how_image"/>
+                                    <div class="how_step-wrap flex items-center mb-2">
+                                        <h3 class="heading-style-h3 text-color-blue mr-2">2 |</h3>
+                                        <h3 class="heading-style-h3 text-color-white text-style-allcaps">AI Learns & Adapts</h3>
+                                    </div>
+                                    <div class="text-align-center text-gray-300">HELO intelligently learns your environment and potential threats.</div>
+                                </div>
+                                <div class="how_card">
+                                    <img src="https://placehold.co/128x128/3B82F6/FFFFFF/png?text=3" loading="lazy" alt="Step 3 Icon" class="how_image"/>
+                                    <div class="how_step-wrap flex items-center mb-2">
+                                        <h3 class="heading-style-h3 text-color-blue mr-2">3 |</h3>
+                                        <h3 class="heading-style-h3 text-color-white text-style-allcaps">Proactive Protection</h3>
+                                    </div>
+                                    <div class="text-align-center text-gray-300">Receive smart alerts and guidance for any emergency, anywhere.</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="button-group center flex justify-center">
+                            <div class="text-size-regular text-gray-400 max-w-lg text-center">HELO's device and AI platform are still in development and are not yet available on the market. The products shown are prototypes or computer generated images.</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="margin-bottom margin-large mt-16 mb-20">
+                    <img class="fullscreen_graphic rounded-3xl shadow-xl" src="https://placehold.co/1200x600/000000/FFFFFF?text=HELO+Ecosystem+Graphic" alt="HELO Ecosystem Graphic" loading="lazy"/>
+                </div>
+                <div class="button-group center flex flex-col md:flex-row justify-center gap-4">
+                    <a href="https://wefunder.com/helo" target="_blank" class="button-main bg-blue-500 text-white px-6 py-3 rounded-full font-bold shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">Invest now</a>
+                    <a href="#" class="button-main gradient bg-gradient-to-r from-blue-500 to-green-500 text-white px-6 py-3 rounded-full font-bold shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">Sign up to learn more</a>
+                </div>
+                <!-- Decorative elements (simplified from EFG) -->
+                <div class="hero-deco absolute top-10 right-10 w-32 h-32 bg-green-400 opacity-10 rounded-full blur-3xl"></div>
+                <div class="hero-deco absolute bottom-20 left-20 w-48 h-48 bg-blue-500 opacity-10 rounded-full blur-3xl"></div>
+            </div>
+
+            <!-- Problem Section -->
+            <div id="problem" class="section_grid py-16 md:py-24 bg-gray-900">
+                <div class="padding-global w-full max-w-7xl px-4 md:px-6">
+                    <div class="grid_2col flex flex-col md:flex-row items-center gap-10 md:gap-20">
+                        <div class="grid_content-stack md:w-1/2 flex flex-col items-center md:items-start text-center md:text-left">
+                            <div class="grid_header-stack flex flex-col items-center md:items-start mb-6">
+                                <div class="max-w-xl">
+                                    <h2 class="heading-style-h2 text-white text-style-allcaps">Are you truly ready for the <span class="text-color-green">unexpected?</span></h2>
+                                </div>
+                                <div class="text-size-xlarge text-weight-bold text-white mt-4">Invest in the solution</div>
+                                <div class="separator-small bg-green-400 rounded-full h-1 w-16 mt-4"></div>
+                            </div>
+                            <div class="text-size-large text-gray-300">In an increasingly unpredictable world, reliance on reactive emergency systems leaves millions vulnerable. From natural disasters to unforeseen outages, many households lack integrated, proactive solutions to keep them safe and informed.</div>
+                            <div class="text-size-large text-gray-300 mt-4">Traditional alerts are often generic, manual preparedness is overwhelming, and standalone detectors provide limited scope. There's a clear, urgent need for a unified, intelligent safety companion, representing a multi-billion dollar opportunity across the smart home market, emergency services, and personal safety segments.</div>
+                        </div>
+                        <div class="grid_stat-stack md:w-1/2 flex flex-col gap-8 w-full">
+                            <div class="grid_stat-item bg-gray-800 p-6 rounded-2xl shadow-lg flex flex-col items-center md:items-start text-center md:text-left">
+                                <div class="text-size-xlarge text-green-400 font-bold mb-2">60%</div>
+                                <div class="text-size-medium text-white">of households lack a comprehensive emergency plan</div>
+                            </div>
+                            <div class="grid_stat-item bg-gray-800 p-6 rounded-2xl shadow-lg flex flex-col items-center md:items-start text-center md:text-left">
+                                <div class="text-size-xlarge text-green-400 font-bold mb-2">$500B+</div>
+                                <div class="text-size-medium text-white">projected smart home safety market by 2030</div>
+                            </div>
+                            <div class="grid_stat-item bg-gray-800 p-6 rounded-2xl shadow-lg flex flex-col items-center md:items-start text-center md:text-left">
+                                <div class="text-size-xlarge text-green-400 font-bold mb-2">1,000+</div>
+                                <div class="text-size-medium text-white">major natural disasters annually in the US</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- When Traditional Solutions Fall Short Section -->
+            <div class="section_fail py-16 md:py-24 bg-gray-800">
+                <div class="padding-global w-full max-w-7xl px-4 md:px-6">
+                    <div class="margin-bottom margin-large mb-12">
+                        <div class="grid_header-stack flex flex-col items-center text-center">
+                            <h2 class="heading-style-h2 text-white">When current solutions leave you exposed</h2>
+                            <div class="separator-small bg-green-400 rounded-full h-1 w-16 mt-4"></div>
+                        </div>
+                    </div>
+                    <div class="fail_5col flex flex-col md:flex-row justify-center items-stretch gap-8">
+                        <div class="fail_card flex-1 min-w-[280px]">
+                            <div class="margin-bottom margin-small mb-4">
+                                <img src="https://placehold.co/64x64/3B82F6/FFFFFF/png?text=App" loading="lazy" alt="Generic App Icon"/>
+                            </div>
+                            <div class="margin-bottom margin-xsmall mb-2">
+                                <h3 class="heading-style-h3 text-white">Generic Emergency Apps</h3>
+                            </div>
+                            <div class="text-size-regular text-gray-300 text-align-center">Lack real-time data & personalized insights.</div>
+                        </div>
+                        <div class="separator-vertical hidden md:block"></div>
+                        <div class="fail_card flex-1 min-w-[280px]">
+                            <div class="margin-bottom margin-small mb-4">
+                                <img src="https://placehold.co/64x64/3B82F6/FFFFFF/png?text=Detector" loading="lazy" alt="Standalone Detector Icon"/>
+                            </div>
+                            <div class="margin-bottom margin-xsmall mb-2">
+                                <h3 class="heading-style-h3 text-white">Standalone Detectors</h3>
+                            </div>
+                            <div class="text-size-regular text-gray-300 text-align-center">Offer limited scope, no integrated response.</div>
+                        </div>
+                        <div class="separator-vertical hidden md:block"></div>
+                        <div class="fail_card flex-1 min-w-[280px]">
+                            <div class="margin-bottom margin-small mb-4">
+                                <img src="https://placehold.co/64x64/3B82F6/FFFFFF/png?text=Manual" loading="lazy" alt="Manual Preparedness Icon"/>
+                            </div>
+                            <div class="margin-bottom margin-xsmall mb-2">
+                                <h3 class="heading-style-h3 text-white">Manual Preparedness</h3>
+                            </div>
+                            <div class="text-size-regular text-gray-300 text-align-center">Overwhelming, often incomplete, and reactive.</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Powering a Market Section -->
+            <div class="section_powering py-16 md:py-24 bg-gray-900">
+                <div class="padding-global w-full max-w-7xl px-4 md:px-6">
+                    <div class="container-small mx-auto flex flex-col items-center text-center">
+                        <div class="margin-bottom margin-small mb-4">
+                            <div class="grid_header-stack less center flex flex-col items-center">
+                                <h2 class="heading-style-h1 text-white">POWERING A <span class="text-color-green">$1 TRILLION MARKET</span></h2>
+                                <div class="separator-small bg-green-400 rounded-full h-1 w-16 mt-4"></div>
+                            </div>
+                        </div>
+                        <div class="margin-bottom margin-large mb-12">
+                            <div class="text-size-medium text-gray-300">We're pioneering a new category in smart home safety, addressing the critical need for proactive, intelligent emergency preparedness. This represents a multi-billion dollar opportunity within the rapidly expanding smart home market and the universal demand for personal and family safety.</div>
+                        </div>
+                    </div>
+                    <div class="container-medium mx-auto mt-12">
+                        <img src="https://placehold.co/1100x550/000000/FFFFFF?text=HELO+Market+Opportunity+Graphic" loading="lazy" alt="HELO Market Opportunity Graphic" class="w-full h-auto rounded-xl shadow-xl"/>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Freedom Beyond the Grid Section (Benefits) -->
+            <div class="section_freedom relative py-16 md:py-24 bg-gray-800 section-bg-video" style="background-image:url('https://placehold.co/1600x900/000000/FFFFFF?text=Emergency+Campsite+Placeholder');">
+                <video autoplay loop muted playsinline class="absolute inset-0 w-full h-full object-cover">
+                    <source src="https://assets.mixkit.co/videos/preview/mixkit-rainy-storm-1349-large.mp4" type="video/mp4">
+                    <source src="https://assets.mixkit.co/videos/preview/mixkit-rainy-storm-1349-large.webm" type="video/webm">
+                </video>
+                <div class="padding-global z-index-1 w-full max-w-7xl px-4 md:px-6">
+                    <div class="margin-bottom margin-large mb-12">
+                        <div class="freedom_cell text-center md:text-left">
+                            <div class="grid_header-stack flex flex-col items-center md:items-start mb-6">
+                                <div class="separator-small bg-green-400 rounded-full h-1 w-16 mt-4"></div>
+                                <h2 class="heading-style-h1 text-white mt-2">PEACE OF MIND, ANYWHERE, ANYTIME</h2>
+                            </div>
+                            <div class="text-size-medium text-gray-300">From unpredictable power outages to unexpected emergencies, HELO ensures you're always connected, informed, and prepared. Our AI-driven platform adapts to your needs, providing actionable intelligence and bridging the gap between uncertainty and security.</div>
+                        </div>
+                    </div>
+                    <div class="freedom_2col grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mt-12">
+                        <div class="freedom_cell small bg-gray-900 bg-opacity-70 backdrop-blur-sm p-6 rounded-2xl flex flex-col items-center text-center shadow-lg">
+                            <img loading="lazy" src="https://placehold.co/64x64/3B82F6/FFFFFF/png?text=Proactive" alt="Proactive Detection Icon" class="icon-1x1-xlarge mb-4 filter brightness-200"/>
+                            <div class="text-size-regular text-white">Proactive threat detection & early warnings</div>
+                        </div>
+                        <div class="freedom_cell small bg-gray-900 bg-opacity-70 backdrop-blur-sm p-6 rounded-2xl flex flex-col items-center text-center shadow-lg">
+                            <img loading="lazy" src="https://placehold.co/64x64/3B82F6/FFFFFF/png?text=Guidance" alt="Personalized Guidance Icon" class="icon-1x1-xlarge mb-4 filter brightness-200"/>
+                            <div class="text-size-regular text-white">Personalized emergency guidance & instructions</div>
+                        </div>
+                        <div class="freedom_cell small bg-gray-900 bg-opacity-70 backdrop-blur-sm p-6 rounded-2xl flex flex-col items-center text-center shadow-lg">
+                            <img loading="lazy" src="https://placehold.co/64x64/3B82F6/FFFFFF/png?text=Comm" alt="Communication Icon" class="icon-1x1-xlarge mb-4 filter brightness-200"/>
+                            <div class="text-size-regular text-white">Seamless communication with emergency contacts</div>
+                        </div>
+                        <div class="freedom_cell small bg-gray-900 bg-opacity-70 backdrop-blur-sm p-6 rounded-2xl flex flex-col items-center text-center shadow-lg">
+                            <img loading="lazy" src="https://placehold.co/64x64/3B82F6/FFFFFF/png?text=Integrate" alt="Integration Icon" class="icon-1x1-xlarge mb-4 filter brightness-200"/>
+                            <div class="text-size-regular text-white">Integration with smart home devices for unified safety</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Invest Section -->
+            <div id="deals" class="section_invest py-16 md:py-24 bg-gray-900">
+                <div class="padding-global w-full max-w-7xl px-4 md:px-6">
+                    <div class="margin-bottom margin-large mb-12">
+                        <div class="invest_2col flex flex-col md:flex-row items-center gap-10 md:gap-20">
+                            <div class="invest_content md:w-1/2 flex flex-col items-center md:items-start text-center md:text-left">
+                                <div class="grid_header-stack flex flex-col items-center md:items-start mb-6">
+                                    <h2 class="heading-style-h2 text-white"><span class="text-color-green">BE AMONG THE FIRST</span> <br/>TO INVEST IN HELO</h2>
+                                    <div class="separator-small bg-green-400 rounded-full h-1 w-16 mt-4"></div>
+                                </div>
+                                <div class="text-size-medium text-gray-300 mb-6">We've spent years developing the foundational AI and hardware for HELO. Now, we invite visionary investors to join us in bringing this essential device to every home, empowering individuals and families with unparalleled safety.</div>
+                                <div class="button-group flex flex-wrap justify-center md:justify-start gap-4">
+                                    <a href="https://wefunder.com/helo" target="_blank" class="button-main gradient bg-gradient-to-r from-blue-500 to-green-500 text-white px-6 py-3 rounded-full font-bold shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">Invest now on Wefunder</a>
+                                </div>
+                            </div>
+                            <div class="invest_image-wrap md:w-1/2 flex justify-center">
+                                <img src="https://placehold.co/600x400/000000/FFFFFF?text=HELO+Device+Showcase" loading="lazy" alt="HELO Device Showcase" class="invest_image rounded-2xl shadow-xl"/>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="margin-bottom margin-xlarge mt-20"></div>
+                    <div class="invest_dark-farm bg-black bg-opacity-40 backdrop-blur-md p-8 rounded-2xl shadow-2xl flex flex-col md:flex-row items-center justify-center md:justify-start gap-8">
+                        <img src="https://placehold.co/150x60/FFFFFF/000000?text=Wefunder+Logo" loading="lazy" alt="Wefunder Logo" class="invest_wefunder-logo"/>
+                        <div class="separator-vertical hidden md:block w-[2px] h-20 bg-gray-600 rounded-full"></div>
+                        <div class="grid_header-stack less flex flex-col items-center md:items-start text-center md:text-left flex-grow">
+                            <h2 class="heading-style-h4 text-style-allcaps text-white">What is Wefunder?</h2>
+                            <div class="text-size-medium text-gray-300 mt-2">It's where enthusiasts become investors. Rather than just buying our device, you can own a piece of the company building it.</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Connect Section (Footer) -->
+            <div class="section_connect py-16 md:py-24 bg-gray-800">
+                <div class="padding-global w-full max-w-7xl px-4 md:px-6">
+                    <div class="connect_stack flex flex-col items-center text-center">
+                        <div class="container-small xsmall max-w-xl mx-auto">
+                            <div class="margin-bottom margin-small mb-4">
+                                <div class="grid_header-stack less center flex flex-col items-center">
+                                    <h2 class="heading-style-h1 text-align-center"><span class="text-color-green">STAY CONNECTED</span> WITH HELO</h2>
+                                    <div class="separator-large bg-green-400 rounded-full h-1.5 w-24 mt-4"></div>
+                                </div>
+                            </div>
+                            <div class="text-size-medium text-gray-300 mb-8">Want to follow our journey but not ready to invest yet? Join our community to receive updates on our progress, early access to product demonstrations, and exclusive insights from our engineering team.</div>
+                        </div>
+                        <div class="button-group center flex justify-center">
+                            <a href="#" class="button-main gradient bg-gradient-to-r from-blue-500 to-green-500 text-white px-6 py-3 rounded-full font-bold shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">Get early access updates</a>
+                        </div>
+                        <div class="padding-vertical padding-medium py-8 w-full">
+                            <div class="footer_line bg-gray-600 h-px w-full"></div>
+                        </div>
+                        <div class="text-size-regular text-gray-400 text-align-center text-sm">
+                            This is a marketing communication and not an offer to invest. All investment activity takes place on Wefunder under Regulation Crowdfunding. Investment opportunities on Wefunder involve risk, including the possible loss of your investment. Please review all offering materials before investing.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // Smooth scrolling for navigation links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+
+                document.querySelector(this.getAttribute('href')).scrollIntoView({
+                    behavior: 'smooth'
+                });
+            });
+        });
+
+        // Basic mobile menu toggle (conceptual - needs CSS for actual menu display)
+        const menuButton = document.querySelector('.md\\:hidden svg'); // Selects the hamburger icon
+        const navMenu = document.querySelector('.nav_menu');
+
+        if (menuButton && navMenu) {
+            menuButton.addEventListener('click', () => {
+                // This is a simplified toggle. For a full mobile menu,
+                // you'd typically toggle classes that make the menu visible/hidden
+                // and potentially animate it.
+                navMenu.classList.toggle('hidden');
+                navMenu.classList.toggle('flex-col');
+                navMenu.classList.toggle('absolute');
+                navMenu.classList.toggle('top-full');
+                navMenu.classList.toggle('left-0');
+                navMenu.classList.toggle('w-full');
+                navMenu.classList.toggle('bg-gray-900');
+                navMenu.classList.toggle('py-4');
+                navMenu.classList.toggle('shadow-md');
+                navMenu.classList.toggle('items-center');
+                navMenu.classList.toggle('space-x-0');
+                navMenu.classList.toggle('space-y-4');
+            });
+        }
+    </script>
+</body>
+</html>
