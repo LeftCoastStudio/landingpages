@@ -1,0 +1,12 @@
+{
+  "name": "tutu-community-ledger",
+  "private": true,
+  "version": "1.1.0",
+  "type": "module",
+  "description": "Local-first encrypted public-activity evidence log",
+  "scripts": {
+    "start": "node server.mjs",
+    "test": "node tests/qa.cjs"
+  },
+  "engines": { "node": ">=20" }
+}
